@@ -1,5 +1,6 @@
 "use client";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { ethers } from "ethers";
 import { useState } from "react";
 
 export default function Home() {
@@ -8,10 +9,12 @@ export default function Home() {
   );
 
   const requestAccount = async (): Promise<string[]> => {
-    return await window.ethereum.request({ method: "eth_requestAccounts" });
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const accounts = await provider.send("eth_requestAccounts", []);
+    return accounts
   };
 
-  const checkForMetaMask = () => {
+  const haveMetmask = () => {
     if (!window.ethereum) {
       console.log("Please install MetaMask");
       return false;
@@ -20,7 +23,8 @@ export default function Home() {
   };
 
   const onClickConnect = async () => {
-    if (!checkForMetaMask()) {
+
+    if (!haveMetmask()) {
       return;
     }
 
@@ -34,6 +38,7 @@ export default function Home() {
       console.log("Error occurred:", error);
     }
   };
+
 
   return (
     <Box mt={"50px"} textAlign={"center"}>
